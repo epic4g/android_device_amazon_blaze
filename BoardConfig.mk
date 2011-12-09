@@ -1,4 +1,5 @@
 USE_CAMERA_STUB := false
+BOARD_USES_TI_CAMERA_HAL := true
 BOARD_USES_GENERIC_AUDIO := true
 
 # inherit from the proprietary version
@@ -16,13 +17,18 @@ TARGET_ARCH_VARIANT_FPU := neon
 ARCH_ARM_HAVE_TLS_REGISTER := true
 NEEDS_ARM_ERRATA_754319_754320 := true
 BOARD_NEEDS_CUTILS_LOG := true
+MISSING_GRALLOC_BUFFERS := true
+MISSING_EGL_EXTERNAL_IMAGE := true
+MISSING_EGL_PIXEL_FORMAT_YV12 := true
 
-BOARD_KERNEL_CMDLINE := console=ttyO2,115200n8 mem=463M@0x80000000 init=/init vram=5M omapfb.vram=0:5M
+BOARD_KERNEL_CMDLINE := console=ttyO2,115200n8 mem=463M@0x80000000 init=/init vram=64M omapfb.vram=0:32M
 BOARD_KERNEL_BASE := 0x80000000
 BOARD_KERNEL_PAGESIZE := 4096
 
 # Graphics
 BOARD_EGL_CFG := device/amazon/blaze/misc/egl.cfg
+#USE_OPENGL_RENDERER := true
+BOARD_LIB_DUMPSTATE := libdumpstate.blaze_tablet
 
 #TARGET_PROVIDES_RELEASETOOLS := true
 #TARGET_RELEASETOOL_IMG_FROM_TARGET_SCRIPT := ./device/amazon/blaze/releasetools/encore_img_from_target_files
@@ -50,12 +56,16 @@ endif
 
 #TARGET_USE_OMAP_COMPAT := true
 
+# Media Profile
+PRODUCT_COPY_FILES += \
+   $(LOCAL_PATH)/misc/media_profiles.xml:system/etc/media_profiles.xml
 
 # OMAP
 OMAP_ENHANCEMENT := true
 ifdef OMAP_ENHANCEMENT
 COMMON_GLOBAL_CFLAGS += -DOMAP_ENHANCEMENT -DTARGET_OMAP4
 endif
+ENHANCED_DOMX := true
 
 # fix this up by examining /proc/mtd on a running device
 BOARD_BOOTIMAGE_PARTITION_SIZE := 10485760
@@ -70,6 +80,8 @@ BUILD_WITH_ALSA_UTILS := true
 BOARD_USES_TI_OMAP_MODEM_AUDIO := false
 BOARD_HAS_NO_MISC_PARTITION := true
 HARDWARE_OMX := true
+BOARD_GL_OES_EGL_IMG_EXTERNAL_HACK := true
+COMMON_GLOBAL_CFLAGS += -DBOARD_GL_OES_EGL_IMG_EXTERNAL_HACK
 
 TARGET_RECOVERY_PRE_COMMAND := "idme bootmode 0x5001; sync;"
 
@@ -89,7 +101,7 @@ BOARD_USES_TI_CAMERA_HAL := true
 #BOARD_FLASH_BLOCK_SIZE := 131072
 
 TARGET_PREBUILT_KERNEL := device/amazon/blaze/kernel
-BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/amazon/blaze/recovery/recovery_ui.c
+#BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/amazon/blaze/recovery/recovery_ui.c
 
 # Do da wifi
 BOARD_WPA_SUPPLICANT_DRIVER := CUSTOM
@@ -106,6 +118,10 @@ WIFI_FIRMWARE_LOADER        := "wlan_loader"
 WIFI_DRIVER_FW_STA_PATH     := "/system/etc/wifi/firmware.bin"
 WIFI_DRIVER_FW_AP_PATH      := "/system/etc/wifi/softap/firmware_ap.bin"
 
+COMMON_GLOBAL_CFLAGS += -DMISSING_EGL_EXTERNAL_IMAGE \
+  		-DMISSING_EGL_PIXEL_FORMAT_YV12 \
+			-DMISSING_GRALLOC_BUFFERS \
+			-DBOARD_GL_OES_EGL_IMG_EXTERNAL_HACK \
 
 #BOARD_HAS_NO_SELECT_BUTTON := true
 # Use this flag if the board has a ext4 partition larger than 2gb
